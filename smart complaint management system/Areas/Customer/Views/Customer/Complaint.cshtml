@@ -1,0 +1,153 @@
+﻿@{
+    ViewData["Title"] = "File a Complaint";
+    Layout = "~/Areas/Customer/Views/Shared/_LayoutAfterLogin.cshtml";
+}
+
+<div class="container mt-4">
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-core.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-service.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-ui.js"></script>
+    <script src="https://js.api.here.com/v3/3.1/mapsjs-mapevents.js"></script>
+    <link rel="stylesheet" href="https://js.api.here.com/v3/3.1/mapsjs-ui.css">
+
+    <div class="alert alert-primary text-center">
+        <h2>File a Complaint</h2>
+        <p>Please provide details about the issue so we can assist you better.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0">
+                <div class="card-body p-4">
+                    <form asp-controller="Customer" asp-action="Complaint" method="post" enctype="multipart/form-data">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Your Name</label>
+                            <input type="text" class="form-control shadow-sm" value="@User.Identity.Name" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Location</label>
+                            <input type="text" name="Location" class="form-control shadow-sm" id="locationField" placeholder="Enter complaint location" required>
+                        </div>
+
+                        <div id="search-container" class="mb-3">
+                            <input type="text" id="searchBox" class="form-control shadow-sm d-inline-block w-75" placeholder="Search for a location...">
+                            <button type="button" class="btn btn-primary w-25" onclick="searchLocation()">Search</button>
+                        </div>
+
+                        <div id="map" style="height: 400px; width: 100%;" class="mb-3"></div>
+
+                        <input type="hidden" id="latitude" name="Latitude">
+                        <input type="hidden" id="longitude" name="Longitude">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Complaint Type</label>
+                            <select name="ComplaintType" class="form-select shadow-sm" required>
+                                <option value="" selected disabled>Select Complaint Type</option>
+                                <option value="Plumbing">Plumbing</option>
+                                <option value="Electricity">Electricity</option>
+                                <option value="Garbage">Garbage</option>
+                                <option value="Road Maintenance">Road Maintenance</option>
+                                <option value="Water Supply">Water Supply</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Upload Photo (Optional)</label>
+                            <input type="file" name="ComplaintImage" class="form-control shadow-sm">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Complaint Description</label>
+                            <textarea name="ComplaintDescription" class="form-control shadow-sm" rows="4" placeholder="Describe the issue in detail" required></textarea>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 shadow">Submit Complaint</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var platform = new H.service.Platform({
+            'apikey': 'fTgTJMWKTODlalZ3hn20A-NyWlzopjLgnvoJAoxmDH4'
+        });
+
+        var defaultLayers = platform.createDefaultLayers();
+        var map = new H.Map(
+            document.getElementById('map'),
+            defaultLayers.vector.normal.map,
+            {
+                zoom: 10,
+                center: { lat: 27.7172, lng: 85.3240 }
+            });
+
+        var behavior = new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
+        var ui = H.ui.UI.createDefault(map, defaultLayers);
+
+        var marker = new H.map.Marker({ lat: 27.7172, lng: 85.3240 });
+        map.addObject(marker);
+
+        map.addEventListener('tap', function (evt) {
+            var coords = map.screenToGeo(evt.currentPointer.viewportX, evt.currentPointer.viewportY);
+
+            if (marker) {
+                marker.setGeometry(coords);
+                document.getElementById('latitude').value = coords.lat.toFixed(6);
+                document.getElementById('longitude').value = coords.lng.toFixed(6);
+                reverseGeocode(coords.lat, coords.lng);
+            }
+        });
+
+        function searchLocation() {
+            var query = document.getElementById('searchBox').value;
+            if (!query) {
+                alert("Please enter a location to search.");
+                return;
+            }
+
+            var service = platform.getSearchService();
+            service.geocode({ q: query }, (result) => {
+                if (result.items.length > 0) {
+                    var location = result.items[0].position;
+                    var lat = location.lat;
+                    var lng = location.lng;
+
+                    if (marker) {
+                        marker.setGeometry({ lat, lng });
+                    } else {
+                        marker = new H.map.Marker({ lat, lng });
+                        map.addObject(marker);
+                    }
+
+                    document.getElementById('latitude').value = lat.toFixed(6);
+                    document.getElementById('longitude').value = lng.toFixed(6);
+
+                    map.setCenter({ lat, lng });
+                    map.setZoom(14);
+
+                    reverseGeocode(lat, lng);
+                } else {
+                    alert("Location not found!");
+                }
+            }, alert);
+        }
+
+        function reverseGeocode(lat, lng) {
+            var geocoder = platform.getSearchService();
+            geocoder.reverseGeocode({
+                at: lat + ',' + lng
+            }, function (result) {
+                if (result.items.length > 0) {
+                    document.getElementById('locationField').value = result.items[0].address.label;
+                }
+            }, alert);
+        }
+    </script>
+</div>

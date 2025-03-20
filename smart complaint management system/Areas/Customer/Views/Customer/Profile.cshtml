@@ -1,0 +1,40 @@
+﻿@model smart_complaint_management_system.Models.User
+
+@{
+    ViewData["Title"] = "User Profile";
+    Layout = "~/Areas/Customer/Views/Shared/_LayoutAfterLogin.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 bg-white rounded">
+        <div class="row">
+
+            <div class="col-md-4 text-center">
+                @if (Model.Photo != null && Model.Photo.Length > 0)
+                {
+                    <img src="data:image/png;base64,@Convert.ToBase64String(Model.Photo)"
+                         class="rounded-circle img-fluid border p-2"
+                         alt="Profile Picture">
+                }
+                else
+                {
+                    <img src="https://source.unsplash.com/150x150/?person"
+                         class="rounded-circle img-fluid border p-2"
+                         alt="Default Profile Picture">
+                }
+
+                <h4 class="mt-3 text-primary">@Model.Name</h4>
+                <a asp-controller="Customer" asp-action="Edit" class="btn btn-outline-primary btn-sm mt-2">Edit Profile</a>
+            </div>
+
+            <div class="col-md-8">
+                <h3 class="mb-3 text-secondary">Profile Details</h3>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Email:</strong>@Model.Email</li>
+                    <li class="list-group-item"><strong>Phone:</strong>@Model.Phone</li>
+                    <li class="list-group-item"><strong>Date of Birth:</strong>@Model.DateofBirth</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

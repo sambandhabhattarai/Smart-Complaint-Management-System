@@ -1,0 +1,112 @@
+﻿@model IEnumerable<dynamic>
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Areas/Customer/Views/Shared/_LayoutAfterLogin.cshtml";
+}
+
+<div class="container mt-4">
+
+    <div class="alert alert-primary text-center shadow">
+        <h2 class="fw-bold text-dark">Welcome, @User.Identity.Name!</h2>
+        <p class="text-muted">Your complaint resolution starts here.</p>
+    </div>
+
+    <div class="text-center my-4">
+        <a asp-controller="Customer" asp-action="Complaint" class="btn btn-success btn-lg px-5 py-3 shadow-lg rounded-pill">
+            <i class="fas fa-plus-circle"></i> File a Complaint
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-warning text-white text-center shadow-lg">
+                <div class="card-body">
+                    <h4><i class="fas fa-hourglass-half"></i> Pending Complaints</h4>
+                    @{
+                        int pendingCount = Model.Count(c => c.Status == "Pending" || (c.Status != "Resolved" && c.Status != "Rejected"));
+                    }
+                    <h2 class="fw-bold">@pendingCount</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white text-center shadow-lg">
+                <div class="card-body">
+                    <h4><i class="fas fa-check-circle"></i> Resolved</h4>
+                    @{
+                        int resolvedCount = Model.Count(c => c.Status == "Resolved");
+                    }
+                    <h2 class="fw-bold">@resolvedCount</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-danger text-white text-center shadow-lg">
+                <div class="card-body">
+                    <h4><i class="fas fa-times-circle"></i> Rejected Complaints</h4>
+                    @{
+                        int rejectedCount = Model.Count(c => c.Status == "Rejected");
+                    }
+                    <h2 class="fw-bold">@rejectedCount</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-lg border-0">
+        <div class="card-header bg-dark text-white">
+            <h4><i class="fas fa-list"></i> Your Recent Complaints</h4>
+        </div>
+        <div class="card-body">
+            <table class="table table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Complaint ID</th>
+                        <th>Location</th>
+                        <th>Complaint Type</th>
+                        <th>Complaint Date</th>
+                        <th>Status</th>
+                        <th>Taken By</th>
+                        <th>Employee Phone Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        @foreach (var complaint in Model)
+                        {
+                            <tr>
+                                <td>#@complaint.Id</td>
+                                <td>@complaint.Location</td>
+                                <td>@complaint.ComplaintType</td>
+                                <td>@complaint.CreatedAt.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <span class="badge @(complaint.Status == "Pending" ? "bg-warning text-dark" : (complaint.Status == "Resolved" ? "bg-success" : "bg-danger"))">
+                                        @complaint.Status
+                                    </span>
+                                </td>
+                                <td>@(complaint.AssignedEmployee?.EmployeeName ?? "Not Assigned")</td>
+                                <td>@(complaint.AssignedEmployee?.PhoneNumber ?? "N/A")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No complaints found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        function preventBack() {
+            window.history.forward();
+        }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };
+    </script>
+</div>

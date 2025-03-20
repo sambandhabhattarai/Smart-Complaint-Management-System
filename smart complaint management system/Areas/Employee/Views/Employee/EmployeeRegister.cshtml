@@ -1,0 +1,67 @@
+﻿@model smart_complaint_management_system.Models.Employees
+
+@{
+    ViewData["Title"] = "Employee Registration";
+}
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="col-md-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h3>Employee Registration</h3>
+            </div>
+
+            <div class="card-body">
+                <form asp-controller="Employee" asp-action="EmployeeRegister" method="post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="EmployeeName" class="form-label">Employee Name</label>
+                        <input asp-for="EmployeeName" class="form-control" placeholder="Enter full name" required />
+                        <span asp-validation-for="EmployeeName" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="EmployeeEmail" class="form-label">Email</label>
+                        <input asp-for="EmployeeEmail" type="email" class="form-control" placeholder="Enter email" required />
+                        <span asp-validation-for="EmployeeEmail" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Phone</label>
+                        <input asp-for="PhoneNumber" type="number" class="form-control" placeholder="Enter phone number" required />
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Category" class="form-label">Complaint Category</label>
+                        <select asp-for="Category" class="form-select" required>
+                            <option value="">-- Select Category --</option>
+                            <option value="Plumbing">Plumbing</option>
+                            <option value="Electricity">Electricity</option>
+                            <option value="Garbage">Garbage</option>
+                            <option value="Road Maintenance">Road Maintenance</option>
+                            <option value="Water Supply">Water Supply</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" required />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary w-100">Register</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-footer text-center">
+                <small>Already have an account? <a asp-controller="Employee" asp-action="EmployeeLogin">Login here</a></small><br />
+                <small>For Customer Registration <a asp-area="Customer" asp-controller="Customer" asp-action="Register">Click here</a></small>
+            </div>
+        </div>
+    </div>
+</div>

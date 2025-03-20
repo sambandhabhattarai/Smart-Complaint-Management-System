@@ -1,0 +1,114 @@
+﻿@model IEnumerable<smart_complaint_management_system.Models.Complaints>
+
+@{
+    ViewData["Title"] = "Employee Dashboard";
+    Layout = "~/Areas/Employee/Views/Shared/_LayoutAfterLogin.cshtml";
+    var employeeName = ViewBag.EmployeeName as string;
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary text-center">Employee Dashboard</h2>
+    <h4 class="text-center">Welcome, <span class="text-success">@employeeName</span></h4>
+    <p class="text-muted text-center">Viewing complaints for your assigned category</p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            No complaints found in your assigned category.
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-striped mt-3">
+            <thead class="table-dark">
+                <tr>
+                    <th>Location</th>
+                    <th>Complaint Type</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Date Created</th>
+                    <th>Action</th>
+                    <th>Complaint Photo</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var complaint in Model)
+                {
+                    <tr>
+                        <td>
+                            @complaint.Location
+                            <a href="https://www.google.com/maps?q=@complaint.Latitude,@complaint.Longitude" target="_blank">
+                                <i class="bi bi-geo-alt-fill text-danger"></i>
+                            </a>
+                        </td>
+                        <td>@complaint.ComplaintType</td>
+                        <td>@complaint.ComplaintDescription</td>
+                        <td>
+                            @if (complaint.Status == "Pending")
+                            {
+                                <span class="badge bg-warning text-dark">@complaint.Status</span>
+                            }
+                            else if (complaint.Status == "In Progress")
+                            {
+                                <span class="badge bg-primary">@complaint.Status</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success">@complaint.Status</span>
+                            }
+                        </td>
+                        <td>@complaint.CreatedAt.ToString("dd MMM yyyy")</td>
+                        <td>
+                            <form asp-action="UpdateComplaintStatus" asp-controller="Employee" method="post">
+                                <input type="hidden" name="complaintId" value="@complaint.Id" />
+
+                                <select name="status" class="form-select" onchange="toggleUpdateButton(this)">
+                                    @if (complaint.Status == "Pending")
+                                    {
+                                        <option value="Pending" selected>Pending</option>
+                                        <option value="In Progress">Take Action</option>
+                                        <option value="Resolved" disabled>Completed</option>
+                                    }
+                                    else if (complaint.Status == "In Progress")
+                                    {
+                                        <option value="Pending" disabled>Pending</option>
+                                        <option value="In Progress" selected>In Progress</option>
+                                        <option value="Resolved">Completed</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="Pending" disabled>Pending</option>
+                                        <option value="In Progress" disabled>In Progress</option>
+                                        <option value="Resolved" selected>Completed</option>
+                                    }
+                                </select>
+
+
+
+                                <button type="submit" id="update-btn-@complaint.Id" class="btn btn-success mt-2" disabled>Update</button>
+                            </form>
+                        </td>
+                        <td>
+                            @if (complaint.Photo != null && complaint.Photo.Length > 0)
+                            {
+                                <img src="data:image/jpeg;base64,@Convert.ToBase64String(complaint.Photo)" alt="Complaint Photo" class="img-thumbnail" width="150" height="150" />
+                            }
+                            else
+                            {
+                                <span class="text-muted">No Photo</span>
+                            }
+                        </td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <script>
+        function toggleUpdateButton(selectElement) {
+            var form = selectElement.closest("form");
+            var button = form.querySelector("button[type='submit']");
+            button.disabled = false;
+        }
+    </script>
+</div>

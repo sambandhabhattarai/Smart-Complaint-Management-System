@@ -1,0 +1,52 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="container-fluid hero-section d-flex align-items-center text-center text-white">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Welcome to Smart Complaint Management System</h1>
+        <p class="lead">Effortlessly register and track your complaints with ease.</p>
+        <a href="@Url.Action("Register", "Customer")" class="btn btn-primary btn-lg mt-3">Get Started</a>
+    </div>
+    <script type="text/javascript">
+        function preventBack() {
+            window.history.forward();
+        }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () {
+            null
+        };
+    </script>
+</div>
+
+<section class="container text-center my-5">
+    <h2 class="fw-bold">About Our System</h2>
+    <p class="text-muted">The Smart Complaint Management System helps users to lodge complaints easily and track their resolution in real-time.</p>
+</section>
+
+<section class="container my-5">
+    <h2 class="text-center fw-bold">Key Features</h2>
+    <div class="row text-center mt-4">
+        <div class="col-md-4">
+            <i class="fas fa-file-alt fa-3x text-primary"></i>
+            <h4 class="mt-3">File Complaints</h4>
+            <p>Easily submit complaints with our user-friendly interface.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-tasks fa-3x text-success"></i>
+            <h4 class="mt-3">Track Status</h4>
+            <p>Monitor the status of your complaint anytime, anywhere.</p>
+        </div>
+        <div class="col-md-4">
+            <i class="fas fa-shield-alt fa-3x text-danger"></i>
+            <h4 class="mt-3">Secure & Fast</h4>
+            <p>Your data is protected with top-tier security and instant updates.</p>
+        </div>
+    </div>
+</section>
+
+<section class="container text-center my-5">
+    <h2 class="fw-bold">Need Help?</h2>
+    <p class="text-muted">Our support team is here to assist you. Feel free to reach out.</p>
+    <a href="mailto:support@smartcomplaints.com" class="btn btn-dark btn-lg"><i class="fas fa-envelope"></i> Contact Support</a>
+</section>

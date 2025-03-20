@@ -1,0 +1,54 @@
+﻿@model smart_complaint_management_system.Models.User
+@{
+    ViewData["Title"] = "Edit Profile";
+    Layout = "~/Areas/Customer/Views/Shared/_LayoutAfterLogin.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 bg-white rounded">
+        <h3 class="text-secondary text-center">Edit Profile</h3>
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">
+                @foreach (var modelError in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    <p>@modelError.ErrorMessage</p>
+                }
+            </div>
+        }
+
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Full Name</label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">Email</label>
+                <input asp-for="Email" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">Password</label>
+                <input asp-for="Password" type="password" class="form-control"/>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label">Phone number</label>
+                <input asp-for="Phone" type="number" class="form-control"/>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Upload Photo (Optional)</label>
+                <input type="file" name="ProfilePhoto" class="form-control">
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <a asp-action="Profile" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>

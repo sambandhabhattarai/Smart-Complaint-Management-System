@@ -1,0 +1,88 @@
+﻿@model IEnumerable<smart_complaint_management_system.Models.Complaints>
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAfterLogin.cshtml";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-primary">Admin Dashboard - User Complaints</h2>
+
+    <div class="table-responsive shadow-lg p-4 bg-white rounded">
+        @foreach (var userGroup in Model.GroupBy(c => c.User?.Name ?? "Unknown User"))
+        {
+            <h4 class="mt-3 text-success">@userGroup.Key's Complaints</h4>
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Location</th>
+                        <th>Complaint</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var complaint in userGroup)
+                    {
+                        <tr>
+                            <td>@complaint.Id</td>
+                            <td>
+                                @complaint.Location
+                                <a href="https://www.google.com/maps?q=@complaint.Latitude,@complaint.Longitude" target="_blank">
+                                    <i class="bi bi-geo-alt-fill text-danger"></i>
+                                </a>
+                            </td>
+                            <td>@complaint.ComplaintType</td>
+                            <td><span class="badge bg-warning text-dark">@complaint.Status</span></td>
+                            <td>
+                                <form asp-controller="Admin" asp-action="Update" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@complaint.Id" />
+                                    <select name="status" class="form-select form-select-sm d-inline w-auto">
+                                        <option value="Pending" selected="@(complaint.Status == "Pending" ? "selected" : null)">Pending</option>
+                                        <option value="Resolved" selected="@(complaint.Status == "Resolved" ? "selected" : null)">Resolved</option>
+                                        <option value="Rejected" selected="@(complaint.Status == "Rejected" ? "selected" : null)">Rejected</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-success btn-sm">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-primary">Admin Dashboard - Employee Details</h2>
+
+    <div class="table-responsive shadow-lg p-4 bg-white rounded">
+        @foreach (var employeeGroup in ((List<smart_complaint_management_system.Models.Employees>)ViewBag.Employees).GroupBy(e => e.Category))
+        {
+            <h4 class="mt-3 text-success">@employeeGroup.Key</h4>
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <Th>Email</Th>
+                        <th>Category</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var employee in employeeGroup)
+                    {
+                        <tr>
+                            <td>@employee.EmployeeId</td>
+                            <td>@employee.EmployeeName</td>
+                            <td>@employee.EmployeeEmail</td>
+                            <td>@employee.Category</td>
+                            <td>@employee.PhoneNumber</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
