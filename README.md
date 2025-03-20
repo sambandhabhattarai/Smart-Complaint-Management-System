@@ -42,4 +42,4 @@ update-database
 
 4. Run the Application
 
-Then, open a browser and go to:
+Then, open a browser and you can see the application.
